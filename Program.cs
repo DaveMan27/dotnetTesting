@@ -199,7 +199,10 @@ public class ValueList
 public static class Program
 {
 
+    //private static readonly string textFile = @"C:\Users\davidl\Downloads\document_reader_2024-10-01_12-55-06_response.json";
     private static readonly string textFile = @"C:\Users\davidl\Downloads\data.txt";
+
+
 
     static void Main(string[] args)
     {
@@ -264,15 +267,55 @@ public static class Program
                 foreach (FieldList item in duplicateRecords)
                 {
                     if (!ContainsNonEnglishCharacters(item.value.ToString()))
+                        if (item.valueList.Count > 1)
+                        {
+                            //newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
+                            Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + item.value);
+
+
+                            List<ValueList> mrzVl = (List<ValueList>)item.valueList.Where(vl => vl.source == "MRZ");
+                            List<ValueList> visualVl = (List<ValueList>)item.valueList.Where(vl => vl.source == "VISUAL");
+
+
+
+                            if (ContainsNonEnglishCharacters(mrzVl[0].value.ToString()))
+                            {
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                                Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + visualVl[0].value);
+
+                            }
+                            else
+                            {
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
+                                Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + mrzVl[0].value);
+
+                            }
+                        }
+                        else
+                        {
+                            // SL indicates secondary language
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", item.value);
+                            Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + item.value);
+
+                        }
+                }
+
+                /*foreach (FieldList item in duplicateRecords)
+                {
+                    if (!ContainsNonEnglishCharacters(item.value.ToString()))
                     {
                         newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
+                        Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + item.value);
+
                     }
                     else
                     {
                         // SL indicates secondary language
                         newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", item.value);
+                        Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + item.value);
+
                     }
-                }
+                }*/
             }
 
 
