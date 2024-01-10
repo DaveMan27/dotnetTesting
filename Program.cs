@@ -199,8 +199,8 @@ public class ValueList
 public static class Program
 {
 
-    //private static readonly string textFile = @"C:\Users\davidl\Downloads\document_reader_2024-10-01_12-55-06_response.json";
-    private static readonly string textFile = @"C:\Users\davidl\Downloads\data.txt";
+    private static readonly string textFile = @"C:\Users\davidl\Downloads\document_reader_2024-10-01_12-55-06_response.json";
+    //private static readonly string textFile = @"C:\Users\davidl\Downloads\data.txt";
 
 
 
@@ -265,22 +265,19 @@ public static class Program
 
                 foreach (FieldList item in duplicateRecords)
                 {
-                    Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString());
+                    Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString() + "---" + ContainsNonEnglishCharacters(item.value.ToString()));
                     if (ContainsNonEnglishCharacters(item.value.ToString()))
                     {
-                        //if (item.valueList.Count > 1)
-                        //{
-                        //newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
-                        //Console.WriteLine("ValueList Count is: " + item.valueList.Count);
+                        Console.WriteLine("---------------");
+                        Console.WriteLine(item.value.ToString() + "");
 
                         var mrzVl = item.valueList.Where(vl => vl.source == "MRZ").ToList();
                         var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
 
-
                         if (ContainsNonEnglishCharacters(visualVl[0].value.ToString()))
                         {
+                            Console.WriteLine(visualVl[0].value.ToString() + "");
                             newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
-                            //Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + visualVl[0].value);
                         }
                         else
                         {
@@ -291,31 +288,12 @@ public static class Program
                     {
                         newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value.ToString());
                     }
-
-                    /*foreach (FieldList item in duplicateRecords)
-                    {
-                        if (!ContainsNonEnglishCharacters(item.value.ToString()))
-                        {
-                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
-                            Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + item.value);
-
-                        }
-                        else
-                        {
-                            // SL indicates secondary language
-                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", item.value);
-                            Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + item.value);
-
-                        }
-                    }*/
                 }
 
                 foreach (var item in newObject)
                 {
                     Console.WriteLine(item);
                 }
-
-
             }
 
         }
@@ -324,9 +302,8 @@ public static class Program
     private static bool ContainsNonEnglishCharacters(string input)
     {
         // Regular expression to match any character outside the ASCII range
-        Regex regex = new Regex(@"[^\x00-\x7F]");
+        Regex regex = new Regex(@"[^\x00-\x7F]|[\?]");
 
         return regex.IsMatch(input);
     }
-
 }
