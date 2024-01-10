@@ -260,36 +260,45 @@ public static class Program
                     else
                     {
                         newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
-                        Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + item.value);
                     }
                 }
 
                 foreach (FieldList item in duplicateRecords)
                 {
-                    if (!ContainsNonEnglishCharacters(item.value.ToString()))
-                        if (item.valueList.Count > 1)
+                    Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString());
+                    if (ContainsNonEnglishCharacters(item.value.ToString()))
+                    {
+                        //if (item.valueList.Count > 1)
+                        //{
+                        //newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
+                        //Console.WriteLine("ValueList Count is: " + item.valueList.Count);
+
+                        var mrzVl = item.valueList.Where(vl => vl.source == "MRZ").ToList();
+                        var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
+
+
+                        if (ContainsNonEnglishCharacters(visualVl[0].value.ToString()))
                         {
-                            //newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                            //Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + visualVl[0].value);
+                        }
+                        else
+                        {
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
+                        }
+                    }
+                    else
+                    {
+                        newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value.ToString());
+                    }
+
+                    /*foreach (FieldList item in duplicateRecords)
+                    {
+                        if (!ContainsNonEnglishCharacters(item.value.ToString()))
+                        {
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
                             Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + item.value);
 
-
-                            List<ValueList> mrzVl = (List<ValueList>)item.valueList.Where(vl => vl.source == "MRZ");
-                            List<ValueList> visualVl = (List<ValueList>)item.valueList.Where(vl => vl.source == "VISUAL");
-
-
-
-                            if (ContainsNonEnglishCharacters(mrzVl[0].value.ToString()))
-                            {
-                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
-                                Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + visualVl[0].value);
-
-                            }
-                            else
-                            {
-                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
-                                Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + mrzVl[0].value);
-
-                            }
                         }
                         else
                         {
@@ -298,29 +307,18 @@ public static class Program
                             Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + item.value);
 
                         }
+                    }*/
                 }
 
-                /*foreach (FieldList item in duplicateRecords)
+                foreach (var item in newObject)
                 {
-                    if (!ContainsNonEnglishCharacters(item.value.ToString()))
-                    {
-                        newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
-                        Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + ": " + item.value);
+                    Console.WriteLine(item);
+                }
 
-                    }
-                    else
-                    {
-                        // SL indicates secondary language
-                        newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", item.value);
-                        Console.WriteLine(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage: " + item.value);
 
-                    }
-                }*/
             }
 
-
         }
-
     }
 
     private static bool ContainsNonEnglishCharacters(string input)
