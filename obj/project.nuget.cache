@@ -1,8 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "bhy9k6cNkmAOw5fwAzuxaj0+Bo29UUV6rgRYLEtXot0m/YtFoc+I83QE3JLmrA1U+81q3vJyCaUQHEqCJMpJ0Q==",
+  "dgSpecHash": "ukG8sCrU87J5SV6/WqDnqGOjUW+o45p5fKsuatve/b79m7ObFRJUKZ5/903ZwDif07SEAJ9lGXPj6ZY3BrRRNw==",
   "success": true,
   "projectFilePath": "C:\\Users\\davidl\\OneDrive - The Jewish Agency for Israel\\Documents\\.NET\\ConsoleApp1\\ConsoleApp1.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\davidl\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\davidl\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\davidl\\.nuget\\packages\\system.io\\4.3.0\\system.io.4.3.0.nupkg.sha512",
+    "C:\\Users\\davidl\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512",
+    "C:\\Users\\davidl\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
+    "C:\\Users\\davidl\\.nuget\\packages\\system.threading.tasks\\4.3.0\\system.threading.tasks.4.3.0.nupkg.sha512"
+  ],
   "logs": []
 }
