@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "ukG8sCrU87J5SV6/WqDnqGOjUW+o45p5fKsuatve/b79m7ObFRJUKZ5/903ZwDif07SEAJ9lGXPj6ZY3BrRRNw==",
+  "dgSpecHash": "FD9D4Zs8I8IPW9LpTBnlJ+D8KRMc8b+Lk2EHXPAdtHzM9q0Deu3QBVqTuVguy6udrIG5wmgtsSGkUkKD4f9N1Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\davidl\\OneDrive - The Jewish Agency for Israel\\Documents\\.NET\\ConsoleApp1\\ConsoleApp1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\davidl\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\davidl\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\davidl\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\davidl\\.nuget\\packages\\system.io\\4.3.0\\system.io.4.3.0.nupkg.sha512",
     "C:\\Users\\davidl\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512",
     "C:\\Users\\davidl\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
