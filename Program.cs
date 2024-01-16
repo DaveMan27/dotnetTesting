@@ -201,101 +201,166 @@ public static class Program
 
     private static readonly string textFile = @"C:\Users\davidl\Downloads\document_reader_2024-10-01_12-55-06_response.json";
     //private static readonly string textFile = @"C:\Users\davidl\Downloads\data.txt";
+    //private static readonly string textFile = @"C:\Users\davidl\Downloads\olwyn_visa.json";
+    //private static readonly string textFile = @"C:\Users\davidl\Downloads\viviane_json.json";
+
+
 
 
 
     static void Main(string[] args)
     {
-        string text = File.ReadAllText(textFile);
-        Console.WriteLine("Hello, World!");
-        if (!String.IsNullOrEmpty(text))
+
+        try
         {
-            //RegulaResponse? regulaResponse = JsonConvert.DeserializeObject<RegulaResponse>(textFile);
-            RegulaResponse? myResponse = JsonSerializer.Deserialize<RegulaResponse>(text);
-            Console.WriteLine(myResponse);
-
-            List<FieldList> retrievedFieldList = new List<FieldList>();
-            if (myResponse != null &&
-                    myResponse.ContainerList != null &&
-                    myResponse.ContainerList.List != null &&
-                    myResponse.ContainerList.List.Count > 0)
+            string text = File.ReadAllText(textFile);
+            Console.WriteLine("Hello, World!");
+            if (!String.IsNullOrEmpty(text))
             {
-                foreach (var listItem in myResponse.ContainerList.List)
+                //RegulaResponse? regulaResponse = JsonConvert.DeserializeObject<RegulaResponse>(textFile);
+                RegulaResponse? myResponse = JsonSerializer.Deserialize<RegulaResponse>(text);
+                Console.WriteLine(myResponse);
+
+                List<FieldList> retrievedFieldList = new List<FieldList>();
+                if (myResponse != null &&
+                        myResponse.ContainerList != null &&
+                        myResponse.ContainerList.List != null &&
+                        myResponse.ContainerList.List.Count > 0)
                 {
-                    if (listItem.Text != null &&
-                        listItem.Text.fieldList != null &&
-                        listItem.Text.fieldList.Count > 0)
+                    foreach (var listItem in myResponse.ContainerList.List)
                     {
-                        retrievedFieldList = listItem.Text.fieldList;
-                    }
-                }
+                        if (listItem.Text != null &&
+                            listItem.Text.fieldList != null &&
+                            listItem.Text.fieldList.Count > 0)
+                        {
+                            retrievedFieldList = listItem.Text.fieldList;
+                        }
 
-                HashSet<string> fieldHashSet = new HashSet<string>();
-                List<string> duplicateFieldsList = new List<string>();
-
-                //List<Dictionary<string, object>> objectList = new List<Dictionary<string, object>>();
-                foreach (var item in retrievedFieldList)
-                {
-                    if (fieldHashSet.Add(item.fieldName))
-                    {
-                        fieldHashSet.Add(item.fieldName);
+                        if (listItem.Images != null &&
+                            listItem.Images.fieldList != null &&
+                            listItem.Images.fieldList.Count > 0
+                        )
+                        {
+                            foreach (FieldList fl in listItem.Images.fieldList)
+                            {
+                                if (fl.fieldName == "Portrait")
+                                {
+                                    if (fl.valueList != null &&
+                                        fl.valueList.Count > 0)
+                                    {
+                                        foreach (var vlProp in fl.valueList)
+                                        {
+                                            if (vlProp.source == "VISUAL" &&
+                                                vlProp.value != null)
+                                            {
+                                                Console.WriteLine("" + vlProp.value);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    else
-                    {
-                        duplicateFieldsList.Add(item.fieldName.ToString());
-                        Console.WriteLine("Duplicate Fields: " + item.fieldName.ToString());
-                    }
-                }
-                Console.WriteLine("Finished building duplicateFieldList");
-                Dictionary<string, object> newObject = new Dictionary<string, object>();
 
-                List<FieldList> duplicateRecords = new List<FieldList>();
+                    HashSet<string> fieldHashSet = new HashSet<string>();
+                    List<string> duplicateFieldsList = new List<string>();
 
-                foreach (FieldList item in retrievedFieldList)
-                {
-                    if (duplicateFieldsList.Contains(item.fieldName.ToString()))
+                    //List<Dictionary<string, object>> objectList = new List<Dictionary<string, object>>();
+                    foreach (var item in retrievedFieldList)
                     {
-                        duplicateRecords.Add(item);
+                        if (fieldHashSet.Add(item.fieldName))
+                        {
+                            fieldHashSet.Add(item.fieldName);
+                        }
+                        else
+                        {
+                            duplicateFieldsList.Add(item.fieldName.ToString());
+                            Console.WriteLine("Duplicate Fields: " + item.fieldName.ToString());
+                        }
                     }
-                    else
-                    {
-                        newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
-                    }
-                }
+                    Console.WriteLine("Finished building duplicateFieldList");
+                    Dictionary<string, object> newObject = new Dictionary<string, object>();
 
-                foreach (FieldList item in duplicateRecords)
-                {
-                    Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString() + "---" + ContainsNonEnglishCharacters(item.value.ToString()));
-                    if (ContainsNonEnglishCharacters(item.value.ToString()))
+                    List<FieldList> duplicateRecords = new List<FieldList>();
+
+                    foreach (FieldList item in retrievedFieldList)
                     {
-                        Console.WriteLine("---------------");
-                        Console.WriteLine(item.value.ToString() + "");
+                        if (duplicateFieldsList.Contains(item.fieldName.ToString()))
+                        {
+                            duplicateRecords.Add(item);
+                        }
+                        else
+                        {
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value);
+                        }
+                    }
+
+                    foreach (FieldList item in duplicateRecords)
+                    {
+                        Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString() + "---" + ContainsNonEnglishCharacters(item.value.ToString()));
 
                         var mrzVl = item.valueList.Where(vl => vl.source == "MRZ").ToList();
                         var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
 
-                        if (ContainsNonEnglishCharacters(visualVl[0].value.ToString()))
+
+                        if (mrzVl.Any())
                         {
-                            Console.WriteLine(visualVl[0].value.ToString() + "");
-                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                            if (!ContainsNonEnglishCharacters(mrzVl[0].value.ToString()))
+                            {
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
+                            }
+
+                            if (ContainsNonEnglishCharacters(item.value.ToString()) || ContainsNonEnglishCharacters(visualVl[0].value.ToString()))
+                            {
+                                //if (!newObject.ContainsKey(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c)))))
+                                //{
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                                //}
+                            }
+
+                        }
+
+
+                        /*
+                        
+                        if (ContainsNonEnglishCharacters(item.value.ToString()))
+                        {
+                            Console.WriteLine("---------------");
+                            Console.WriteLine(item.value.ToString() + "");
+
+                                               
+                            
+
+
+                            if (ContainsNonEnglishCharacters(visualVl[0].value.ToString()))
+                            {
+                                Console.WriteLine(visualVl[0].value.ToString() + "");
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                            }
+                            else
+                            {
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
+                            }
                         }
                         else
                         {
-                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value.ToString());
                         }
+                    }*/
                     }
-                    else
-                    {
-                        newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), item.value.ToString());
-                    }
-                }
 
-                foreach (var item in newObject)
-                {
-                    Console.WriteLine(item);
+                    foreach (var objItem in newObject)
+                    {
+                        Console.WriteLine(objItem);
+                    }
+
                 }
             }
+        }
 
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
         }
     }
 
