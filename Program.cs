@@ -18,6 +18,8 @@ public class returnedOutput
 
 }
 
+
+
 public class AvailableSourceList
 {
     public string? source { get; set; }
@@ -199,13 +201,11 @@ public class ValueList
 public static class Program
 {
 
-    private static readonly string textFile = @"C:\Users\davidl\Downloads\document_reader_2024-10-01_12-55-06_response.json";
-    //private static readonly string textFile = @"C:\Users\davidl\Downloads\data.txt";
+    private static readonly string textFile = @"C:\Users\davidl\Downloads\document_reader_2024-10-01_12-55-06_response.json"; // HADAR
+    //private static readonly string textFile = @"C:\Users\davidl\Downloads\data.txt"; // Chinese
     //private static readonly string textFile = @"C:\Users\davidl\Downloads\olwyn_visa.json";
-    //private static readonly string textFile = @"C:\Users\davidl\Downloads\viviane_json.json";
-
-
-
+    //private static readonly string textFile = @"C:\Users\davidl\Downloads\jsonviewer.json";
+    public static Dictionary<string, object>? newObject = new Dictionary<string, object>();
 
 
     static void Main(string[] args)
@@ -219,7 +219,6 @@ public static class Program
             {
                 //RegulaResponse? regulaResponse = JsonConvert.DeserializeObject<RegulaResponse>(textFile);
                 RegulaResponse? myResponse = JsonSerializer.Deserialize<RegulaResponse>(text);
-                Console.WriteLine(myResponse);
 
                 List<FieldList> retrievedFieldList = new List<FieldList>();
                 if (myResponse != null &&
@@ -253,7 +252,7 @@ public static class Program
                                             if (vlProp.source == "VISUAL" &&
                                                 vlProp.value != null)
                                             {
-                                                Console.WriteLine("" + vlProp.value);
+                                                Console.WriteLine("0000000000");
                                             }
                                         }
                                     }
@@ -278,8 +277,8 @@ public static class Program
                             Console.WriteLine("Duplicate Fields: " + item.fieldName.ToString());
                         }
                     }
-                    Console.WriteLine("Finished building duplicateFieldList");
-                    Dictionary<string, object> newObject = new Dictionary<string, object>();
+                    Console.WriteLine("No of fields in duplicate list: " + duplicateFieldsList.Count);
+                    //Dictionary<string, object> newObject = new Dictionary<string, object>();
 
                     List<FieldList> duplicateRecords = new List<FieldList>();
 
@@ -295,14 +294,16 @@ public static class Program
                         }
                     }
 
+                    //Sort the duplicate records according to fieldName
                     duplicateRecords.Sort((x, y) => x.fieldName.CompareTo(y.fieldName));
 
 
 
                     foreach (FieldList item in duplicateRecords)
                     {
+                        Console.WriteLine("--------------------------------------");
                         Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString() + "---" + ContainsNonEnglishCharacters(item.value.ToString()));
-
+                        duplicateChecker(item);
                         //var mrzVl    = item.valueList.Where(vl => vl.source == "MRZ").ToList();
                         //var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
 
@@ -380,5 +381,65 @@ public static class Program
         return regex.IsMatch(input);
     }
 
-    //private static
+    private static void duplicateChecker(FieldList item)
+    {
+
+        if (item.valueList != null &&
+            item.valueList.Count > 0)
+        {
+
+            var mrzVl = item.valueList.Where(vl => vl.source == "MRZ").ToList();
+            var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
+            //if (newObject.ContainsKey(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c)))))
+
+            if (mrzVl.Any() && !ContainsNonEnglishCharacters(mrzVl[0].value.ToString()))
+            {
+                Console.WriteLine("11111");
+                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), mrzVl[0].value);
+            }
+            else if (mrzVl.Any() && ContainsNonEnglishCharacters(mrzVl[0].value.ToString()))
+            {
+                Console.WriteLine("222222");
+                if (visualVl.Any() && ContainsNonEnglishCharacters(visualVl[0].value))
+                {
+                    Console.WriteLine("3333333");
+                    newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                }
+            }
+            else if (!mrzVl.Any())
+            {
+                Console.WriteLine("444444");
+                if (visualVl.Any())
+                {
+                    Console.WriteLine("55555");
+                    if (ContainsNonEnglishCharacters(visualVl[0].value))
+                    {
+                        Console.WriteLine("66666");
+                        newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                    }
+                    else
+                    {
+                        Console.WriteLine("77777");
+
+                        if (newObject.ContainsKey(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c)))))
+                        {
+                            Console.WriteLine("88888");
+                            string fieldValue = (string)newObject[String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c)))];
+                            if (fieldValue != null &&
+                            fieldValue != visualVl[0].value)
+                            {
+                                Console.WriteLine("99999");
+                                newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("00000");
+                            newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))), visualVl[0].value);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
