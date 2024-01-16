@@ -295,15 +295,22 @@ public static class Program
                         }
                     }
 
+                    duplicateRecords.Sort((x, y) => x.fieldName.CompareTo(y.fieldName));
+
+
+
                     foreach (FieldList item in duplicateRecords)
                     {
                         Console.WriteLine(item.fieldName.ToString() + ": " + item.value.ToString() + "---" + ContainsNonEnglishCharacters(item.value.ToString()));
 
-                        var mrzVl = item.valueList.Where(vl => vl.source == "MRZ").ToList();
-                        var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
+                        //var mrzVl    = item.valueList.Where(vl => vl.source == "MRZ").ToList();
+                        //var visualVl = item.valueList.Where(vl => vl.source == "VISUAL").ToList();
+
+                        //objListOrder.Sort((x, y) => x.OrderDate.CompareTo(y.OrderDate));
 
 
-                        if (mrzVl.Any())
+
+                        /*if (mrzVl.Any())
                         {
                             if (!ContainsNonEnglishCharacters(mrzVl[0].value.ToString()))
                             {
@@ -315,10 +322,11 @@ public static class Program
                                 //if (!newObject.ContainsKey(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c)))))
                                 //{
                                 newObject.Add(String.Concat(item.fieldName.ToString().Where(c => !Char.IsWhiteSpace(c))) + "_SecondaryLanguage", visualVl[0].value);
-                                //}
+                                  //}
                             }
 
-                        }
+                        }*/
+
 
 
                         /*
@@ -371,4 +379,6 @@ public static class Program
 
         return regex.IsMatch(input);
     }
+
+    //private static
 }
